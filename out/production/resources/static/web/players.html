@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+
+
+    <title>Players</title>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Battleship</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li ><a href="home.html">Home</a></li>
+                    <li ><a href="games.html">Games</a></li>
+                    <li class="active"><a href="players.html">Players</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                        <div v-if="loggedUser">
+                                <form class="form-inline">
+                                       {{loggedUser.username}}
+                                        <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="logout">Log out</button>
+                                      </form>
+                        </div>
+                        <div v-else>
+                                <form class="form-inline" id="login-form">
+                                        <input class="form-control mr-sm-2" type="text" name="username" placeholder="username" aria-label="Username">
+                                        <input class="form-control mr-sm-2" type="password" name="password"  placeholder="password" aria-label="Password">
+                                        <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
+                                      </form>
+                    
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <h1>Players</h1>
+        <div class="container">
+            <table class="table">
+                <thead id="table-headers">
+                </thead>
+                <tbody id="table-rows">
+
+                    <tr v-for="player in players" :key="player.id">
+                        <td>{{ player.id }}</td>
+                        <td>{{ player.username }}</td>
+                        
+                    </tr>
+
+                </tbody>
+            </table>
+    <div class="container">
+        <h3>Add new player</h3>
+            <form class="form-inline" id="add-form">
+                    Username <input class="form-control mr-sm-2" type="text" name="username" placeholder="username" aria-label="Username">
+                    Password <input class="form-control mr-sm-2" type="password" name="password" placeholder="password" aria-label="Password">
+                    <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="addPlayer">Add Player</button>
+                  </form>
+    </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="players.js"></script>
+</body>
+
+</html>

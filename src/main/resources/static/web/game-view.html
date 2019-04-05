@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="game-view.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+
+
+    <title>Players</title>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar" style="background-color: darkslategray; color: white">
+            <div class="container-fluid center-block">
+                <div class="navbar-header">
+                    <a class="navbar-brand">Battleship</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="games.html"> Back to Games</a></li>
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <div v-if="loggedUser">
+                        <form class="form-inline">
+                            {{loggedUser.username}}
+                        </form>
+                    </div>
+                </ul>
+            </div>
+            </li>
+
+
+        </nav>
+
+        <div class="container-fluid text-center center-block" my-0>
+            <div v-if="!gameOver" class="row text-center d-flex justify-content-around" style=" color: black">
+                <h5>Game {{gameId}} turn: {{currentTurn}}</h5>
+                <h5 v-if="opponentTurn < currentTurn">Opponent's Turn </h5>
+                <h5 v-else>Your Turn </h5>
+            </div>
+            <div v-else class="row text-center">
+                <div class="container">
+                    <div class="row text-center ">
+                        <div class=" col-lg-12 d-flex justify-content-around" >
+                            <div v-for="score in scores" :key="score.id">
+                                <div v-if="score.player.id == loggedUser.id">
+                                    <h2 v-if="score.finalScore == 1">---You Won---</h2>
+                                    <h2 v-else-if="score.finalScore == 0.5">---You Tied!---</h2>
+                                    <h2 v-else>---You Lost---</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-lg-6 center-block  " >
+                    <h4>Fleet Grid</h4>
+                    <div class="container ml-4" id="gamegrid" style="background-color: white; color: black">
+                        <div class="row text-center">
+                            <div class="col-xs-1 border">#</div>
+                            <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
+                                {{ column }}
+                            </div>
+                        </div>
+                        <div class="row text-center" style=" max-height: 40px" v-for="row in gameGrid.vertical" :key="row.id">
+                            <div class="col-xs-1 border"> {{ row }}</div>
+                            <div v-for="cell in gameGrid.horizontal" v-bind:id="row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
+                                <img class="shipimg" v-for="ship in shipFleet" v-if="ship.origine == row+cell" :key="ship.id"
+                                    height="40px" :width="ship.width" :src="ship.img" :style="shipDirection(ship.type)"
+                                    :id="ship.type">
+
+                                <div class="puffIn infotooltip" id="puffIn" v-if="isHit( row+cell)" class="col-sm-12 h-100">
+                                    <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550149790/explode.png">
+
+                                    <span class="tooltiptext">Turn {{isHit( row+cell)}}</span>
+                                </div>
+
+
+                                <!-- <div v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: red">
+                                    {{isHit( row+cell)}}
+                                </div> -->
+
+                                <div v-else class="col-sm-12 h-100  px-0 py-0 mx-0 my-0" @drop="drop($event,row,cell)"
+                                    @dragover="allowDrop($event,row,cell)" @dragleave="dragLeave($event,row,cell)"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="row text-center mx-2">
+                        <div v-if="readytoPlay " class="col-lg-12 d-flex justify-content-center" style="color: black">
+                            <p v-if="sunk[0]">You sunk the opponent's
+                                {{sunk[0]}}&nbsp{{sunk[1]}}&nbsp{{sunk[2]}}&nbsp{{sunk[3]}}&nbsp{{sunk[4]}}</p>
+                        </div>
+                        <div v-else class="col-lg-11 col-sm11 d-flex justify-content-center" style="color: black">
+                            <h6>Place your ships on the grid</h6>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6" >
+
+                    <div v-if="!readytoPlay" class="container">
+                        <h3>Fleet</h3>
+                        <button v-if="fleetReady" class="btn btn-outline-dark my-2 my-sm-0" v-on:click="addShip">Add
+                            Ships</button>
+                        <div class="row" style="display: flex">
+                            <div style="display: flex" v-if="!shipFleet.destroyer.set">
+                                <h5>Destroyer</h5>
+
+                                <button v-on:click="rotateDestroyer" class="btn"><i class="fas fa-sync-alt"></i><img id="Destroyer"
+                                        :width="shipFleet.destroyer.width" height="40px" :src="shipFleet.destroyer.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
+
+                            </div>
+                        </div>
+                        <div class="row " style="height: 50px;">
+                            <div style="display: flex" v-if=" !shipFleet.cruiser.set">
+                                <h5>Cruiser</h5>
+
+                                <button v-on:click="rotateCruiser" class="btn"><i class="fas fa-sync-alt"></i><img id="Cruiser"
+                                        height="40px" :src="shipFleet.cruiser.img" draggable="true" @dragstart="drag($event)"></button>
+                            </div>
+                        </div>
+                        <div class="row" style="height: 50px">
+                            <div style="display: flex" v-if="!shipFleet.carrier.set">
+                                <h5>Carrier</h5>
+
+                                <button v-on:click="rotateCarrier" class="btn"><i class="fas fa-sync-alt"></i><img id="Carrier"
+                                        height="40px" :width="shipFleet.carrier.width" :src="shipFleet.carrier.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
+
+                            </div>
+                        </div>
+                        <div class="row" style="display: flex">
+                            <div style="display: flex" v-if="!shipFleet.submarine.set">
+                                <h5>Submarine</h5>
+
+                                <button id="sub" v-on:click="rotateSubmarine" class="btn"><i class="fas fa-sync-alt"></i>
+                                    <img id="Submarine" height="40px" :width="shipFleet.submarine.width" :src="shipFleet.submarine.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
+
+                            </div>
+                        </div>
+                        <div class="row text-center">
+
+                            <div style="display: flex" v-if="!shipFleet.battleship.set">
+
+                                <h5>Battleship</h5>
+
+                                <button v-on:click="rotateBattleship" class="btn"><i class="fas fa-sync-alt"></i> <img
+                                        id="Battleship" height="40px" :width="shipFleet.battleship.width" :src="shipFleet.battleship.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button v-show="invalidPos" class="btn btn-outline-danger my-2 my-sm-0">Invalid Position</button>
+                        </div>
+                    </div>
+                    <div v-else class="container">
+                        <h4>Salvoes Grid</h4>
+                        <div class="container ml-2" id="salvogrid" style="background-color: white; color: black">
+
+                            <div class="row text-center">
+                                <div class="col-xs-1 border">#</div>
+                                <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
+                                    {{ column }}
+                                </div>
+                            </div>
+                            <div class="row text-center" v-for="row in gameGrid.vertical" :key="row.id">
+                                <div class="col-xs-1 border"> {{ row }}</div>
+                                <div v-on:click="salvoSelect(row , cell)" @mouseover="mouseonSalvoes($event,row,cell)"
+                                    @mouseout="mouseoutSalvoes($event,row,cell)" v-for="cell in gameGrid.horizontal"
+                                    v-bind:id="'_'+row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
+                                    <div class="puffIn infotooltip" id="puffIn" v-if="hasHit( row+cell)" class="col-sm-12 h-100">
+                                        <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550826612/check.png">
+
+                                        <span class="tooltiptext">Turn {{isFired( row+cell)}}</span>
+                                    </div>
+                                    <!-- <div v-if="hasHit( row+cell)" class="col-sm-12 h-100" style="background-color: green">
+                                        <h5>{{hasHit( row+cell)}}</h5>
+                                    </div> -->
+                                    <div class="puffIn infotooltip" id="puffIn" v-else-if="isFired( row+cell) && !hasHit(row+cell)"
+                                        class="col-sm-12 h-100">
+                                        <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550826612/hit.png">
+
+                                        <span class="tooltiptext">Turn {{isFired( row+cell)}}</span>
+                                    </div>
+                                    <!-- <div v-else-if="isFired( row+cell) && !hasHit(row+cell)" class="col-sm-12 h-100"
+                                        style="background-color: cadetblue">
+                                        
+
+                                        <h5>{{isFired( row+cell)}}</h5>
+                                    </div> -->
+
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="opponentTurn < currentTurn" class="row text-center mx-2">
+                            <div class="col-lg-11 col-sm11 d-flex justify-content-center" style=" color: black">
+                                <h6>Wait for your opponent to play</h6>
+                            </div>
+                        </div>
+                        <div v-else-if="gameOver" class="row text-center mx-2">
+                            <div class=" col-lg-11 col-sm-11 d-flex justify-content-center " style=" color: black">
+                                <h5>Game is over</h5>
+                            </div>
+                        </div>
+                        <div v-else class="row text-center mx-2">
+                            <div v-if="currentSalvo[0]" class=" col-lg-11 col-sm-11  d-flex justify-content-center "
+                                style=" color: black">
+                                <div>
+                                    <h5>Next salvo at {{currentSalvo[0]}}, {{currentSalvo[1]}} </h5>
+                                </div>
+                                <div v-if="currentSalvo[1]">
+                                    <button class="btn btn-sm btn-danger" v-on:click="addSalvo"> &nbspFire&nbsp
+                                    </button>
+                                    <button class="btn btn-sm btn-info" v-on:click="currentSalvo = []">Cancel</button>
+                                </div>
+                            </div>
+                            <div v-else class=" col-lg-11 col-sm-11 d-flex  d-flex justify-content-center" style=" color: black">
+                                <h6>Select two target locations on the salvoes grid</h6>
+                            </div>
+
+                        </div>
+                        <!-- <div class="row">
+                            <div class="container">
+                                <table>
+                                    <thead>
+                                        <th>Turn</th>
+                                        <th>Hits</th>
+                                        <th>Sunk</th>
+
+
+
+                                    </thead>
+
+                                    <tbody v-for="item in hits" :key="item.id">
+                                        <tr v-for="l in item.hit" :key="l.id">
+                                            <td>{{l.turn}}</td>
+                                            <td>{{l.hit}}</td>
+                                            <td v-if="item.type">{{item.type}}</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div> -->
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="game_view.js"></script>
+</body>
+
+</html>

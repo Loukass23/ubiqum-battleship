@@ -1,0 +1,106 @@
+.row {
+  height: 40px;
+}
+
+.col-xs-1 {
+
+  width: 40px;
+
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+
+.shipimg {
+  z-index: 1;
+  position: absolute;
+  transform: translateX(-20px) translateY(-5px);
+
+}
+
+
+
+#div1 {
+  width: 350px;
+  height: 70px;
+  padding: 10px;
+  border: 1px solid #aaaaaa;
+}
+
+.puffIn {
+  -webkit-animation-name: puffIn;
+  animation-name: puffIn;
+  animation-duration: .8s;
+  border-radius: 100px;
+
+  position: absolute;
+
+  z-index: 2;
+  background-image: url("https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550149790/explode.png")
+}
+
+@-webkit-keyframes puffIn {
+  0% {
+    opacity: 0;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transform: scale(2, 2);
+    transform: scale(2, 2);
+    -webkit-filter: blur(2px);
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: 0.8;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+    -webkit-filter: blur(0px);
+    filter: blur(0px);
+  }
+}
+
+@keyframes puffIn {
+  0% {
+    opacity: 0;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transform: scale(2, 2);
+    transform: scale(2, 2);
+    -webkit-filter: blur(2px);
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: .8;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+    -webkit-filter: blur(0px);
+    filter: blur(0px);
+  }
+}
+
+
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  transform: translateX(-120px) translateY(-70px);
+
+  position: absolute;
+  z-index: 1;
+}
+
+.infotooltip:hover .tooltiptext {
+  visibility: visible;
+}

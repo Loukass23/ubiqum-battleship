@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+
+
+    <title>Games</title>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar  " style="background-color: darkslategray; color: white">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a style="color: white" class="navbar-brand" href="#">Battleship</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a style="color: white" href="home.html">Home</a></li>
+                    <li class="active"><a style="color: white" href=" games.html">Games</a></li>
+                    <li><a style="color: white" href=" players.html">Players</a></li>
+                    <li><a style="color: white" href=" leaderboard.html">Leaderboard</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <div v-if="loggedUser">
+                            <form class="form-inline">
+                                {{loggedUser.username}}
+                                <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="logout">Log out</button>
+                            </form>
+                        </div>
+                        <div v-else>
+                            <div class="form-inline" id="login-form">
+                                <input id="username" v-on:keyup.enter="login" class="form-control mr-sm-2" type="text"
+                                    name="username" placeholder="username" aria-label="Username">
+                                <input v-on:keyup.enter="login" id="password" class="form-control mr-sm-2" type="password"
+                                    name="password" placeholder="password" aria-label="Password">
+                                <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <h1>Games</h1>
+        <div class="container">
+            <table class="table table-hover">
+                <thead>
+                    <td>Game</td>
+                    <td>Start Date</td>
+                    <td>Players</td>
+                    <td>Game Over</td>
+
+                </thead>
+                <tbody>
+                    <tr v-for="(game, index) in games" :key="game.id">
+                        <td>{{ game.id }}</td>
+                        <td>{{game.created}}</td>
+                        <td>{{players[index].player_1}} VS {{players[index].player_2}}</td>
+                        <td v-if="game.gameOver">Yes</td>
+                        <td v-else>No</td>
+                        <td v-if="loggedUser">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="selectGame(game.id)">Info</button>
+                            <button v-if="players[index].player_1 != loggedUser.username && !players[index].player_2"
+                                class="btn btn-outline-success my-2 my-sm-0" v-on:click="addPlayertoGame(game.id)">Join</button>
+                            <button v-if="(players[index].player_1 == loggedUser.username && players[index].player_2) || (players[index].player_2 == loggedUser.username && players[index].player_1)"
+                                class="btn btn-outline-success my-2 my-sm-0" v-on:click="resumeGame(game.id)">Resume</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="addGame">Add</button>
+
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="games.js"></script>
+</body>
+
+</html>
