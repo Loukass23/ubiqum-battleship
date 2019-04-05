@@ -46,13 +46,15 @@ public class SalvoController {
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
-        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        GamePlayer gamePlayer = gamePlayerRep.getOne(gamePlayerId);
+        //GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+
         if(loggedPlayer().gamePlayers.stream().anyMatch(e -> e == gamePlayer)) return gamePlayer;
         else return  null;
     }
     @RequestMapping("/game/{gameId}")
     public Map<String, Object>findGame(@PathVariable Long gameId) {
-        Game game = gameRep.findOne(gameId);
+        Game game = gameRep.getOne(gameId);
         Map<String, Object> map = new HashMap<>();
         if(game.getPlayers().contains(loggedPlayer())) {
             map.put("player",loggedPlayer());
@@ -208,7 +210,7 @@ return map;
 
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<String> addShips(@PathVariable Long gamePlayerId,  @RequestBody List<Ship> ships) {
-        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        GamePlayer gamePlayer = gamePlayerRep.getOne(gamePlayerId);
         if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
 
         ships.stream().forEach(e -> {
@@ -227,7 +229,7 @@ return map;
 
     @RequestMapping(path = "/games/players/{gamePlayerId}/score", method = RequestMethod.POST )
     public ResponseEntity<String> addScore(@PathVariable Long gamePlayerId){
-        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        GamePlayer gamePlayer = gamePlayerRep.getOne(gamePlayerId);
         GamePlayer opponent = gamePlayer.getOpponent();
         Game game = gamePlayer.getGame();
         game.setGameOver(true);
@@ -263,7 +265,7 @@ return map;
 
     @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addSalvoes(@PathVariable Long gamePlayerId,  @RequestBody List<Salvo> salvoes) {
-        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        GamePlayer gamePlayer = gamePlayerRep.getOne(gamePlayerId);
         if (gamePlayer.getPlayer() != loggedPlayer())
             return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
 
@@ -294,7 +296,7 @@ return map;
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
         Player player = playerRep.findByUsername(playerName);
-        Game game = gameRep.findOne(gameId);
+        Game game = gameRep.getOne(gameId);
 
         if(game.getGamePlayers().stream().count() >= 2) return new ResponseEntity<>("Too many players", HttpStatus.FORBIDDEN);
         if(game.getGamePlayers().stream().anyMatch(e -> e.getPlayer() == player)) return new ResponseEntity<>("Player already in game", HttpStatus.FORBIDDEN);
