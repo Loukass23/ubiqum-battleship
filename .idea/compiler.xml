@@ -6,10 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="initial" />
+        <module name="battleship-final" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="battleship-final" target="1.8" />
+      <module name="battleship-final.main" target="1.8" />
+      <module name="battleship-final.test" target="1.8" />
       <module name="initial" target="1.8" />
       <module name="initial.main" target="1.8" />
       <module name="initial.test" target="1.8" />
@@ -17,6 +20,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="battleship-final" options="-parameters" />
       <module name="initial" options="-parameters" />
     </option>
   </component>

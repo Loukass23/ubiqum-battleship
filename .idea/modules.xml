@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.main.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.test.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/battleship-final.iml" filepath="$PROJECT_DIR$/.idea/modules/battleship-final.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/battleship-final.main.iml" filepath="$PROJECT_DIR$/.idea/modules/battleship-final.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/battleship-final.test.iml" filepath="$PROJECT_DIR$/.idea/modules/battleship-final.test.iml" />
     </modules>
   </component>
 </project>
